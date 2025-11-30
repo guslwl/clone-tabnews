@@ -32,5 +32,7 @@ export default async function migrations(request, response) {
     return response.status(responseStatusCode).json(migratedMigrations);
   }
 
+  console.log(`Method not allowed: ${request.method}`);
+
   return response.status(405).end();
 }
