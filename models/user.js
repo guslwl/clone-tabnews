@@ -1,5 +1,33 @@
 import database from "infra/database.js";
-import { ValidationError } from "infra/errors.js";
+import { ValidationError, NotFoundError } from "infra/errors.js";
+
+async function findOneByUsername(username) {
+  const userFound = await runSelectQuery(username);
+  return userFound;
+
+  async function runSelectQuery(username) {
+    // Why we don't have a LIMIT 1 in this query? https://gist.github.com/guslwl/f80e3a5c03c1b14c1422cf559e7fd4b0
+    const results = await database.query({
+      text: `
+      SELECT
+        *
+      FROM
+        users
+      WHERE
+        LOWER(username) = LOWER($1)
+    ;`,
+      values: [username],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "The username was not found",
+        action: "Check the username and try again",
+      });
+    }
+    return results.rows[0];
+  }
+}
 
 async function create(userInputValues) {
   await validateUniqueEmail(userInputValues.email);
@@ -71,6 +99,6 @@ async function create(userInputValues) {
   }
 }
 
-const user = { create };
+const user = { create, findOneByUsername };
 
 export default user;
