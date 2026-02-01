@@ -7,6 +7,7 @@ const defaultMigrationsOptions = {
   direction: "up",
   log: () => {},
   migrationsTable: "pgmigrations",
+  dryRun: true,
 };
 
 async function listPendingMigrations() {
@@ -18,7 +19,9 @@ async function listPendingMigrations() {
     const pendingMigrations = await migrationRunner({
       ...defaultMigrationsOptions,
       dbClient,
+      dryRun: true,
     });
+
     return pendingMigrations;
   } finally {
     await dbClient?.end();
