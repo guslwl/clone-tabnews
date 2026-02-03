@@ -1,4 +1,5 @@
 import { version as uuidVersion } from "uuid";
+
 import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
@@ -10,16 +11,8 @@ beforeAll(async () => {
 describe("GET /api/v1/users/[username]", () => {
   describe("Anonymous User", () => {
     test("With exact case match", async () => {
-      await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "sameCase",
-          email: "sameCase@example.com",
-          password: "senhaUltraSecreta",
-        }),
+      const createdUser = await orchestrator.createUser({
+        username: "sameCase",
       });
 
       const response2 = await fetch(
@@ -31,7 +24,7 @@ describe("GET /api/v1/users/[username]", () => {
       expect(response2Body).toEqual({
         id: response2Body.id,
         username: "sameCase",
-        email: "sameCase@example.com",
+        email: createdUser.email,
         password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
@@ -42,16 +35,8 @@ describe("GET /api/v1/users/[username]", () => {
     });
 
     test("With case mismatch", async () => {
-      await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "mismatchCase",
-          email: "mismatchCase@example.com",
-          password: "senhaUltraSecreta",
-        }),
+      const createdUser = await orchestrator.createUser({
+        username: "mismatchCase",
       });
 
       const response2 = await fetch(
@@ -63,7 +48,7 @@ describe("GET /api/v1/users/[username]", () => {
       expect(response2Body).toEqual({
         id: response2Body.id,
         username: "mismatchCase",
-        email: "mismatchCase@example.com",
+        email: createdUser.email,
         password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
@@ -75,7 +60,7 @@ describe("GET /api/v1/users/[username]", () => {
 
     test("With nonexistent username", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/nonexistentUser",
+        "http://localhost:3000/api/v1/users/nonExistentUser",
       );
       expect(response.status).toBe(404);
 
