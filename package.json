@@ -4,7 +4,8 @@
   "description": "Implementação do tabnews.com.br para o curso.dev",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "dev": "next dev",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write ."
