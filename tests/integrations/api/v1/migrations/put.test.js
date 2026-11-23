@@ -4,10 +4,14 @@ beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
 
-test("PUT to /api/v1/migrations should return 405", async () => {
-  const response = await fetch("http://localhost:3000/api/v1/migrations", {
-    method: "PUT",
-  });
+describe("PUT /api/v1/status", () => {
+  describe("Anonymous User", () => {
+    test("Makes a request with a non allowed method", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+        method: "PUT",
+      });
 
-  expect(response.status).toBe(405);
+      expect(response.status).toBe(405);
+    });
+  });
 });
